@@ -21,4 +21,4 @@ Welcome to Phase-1 of our Hackathon! Please find the following attachments and i
 We appreciate the contributions of the following individuals to this project:
 
 - Aishwarya Ashtekar : [GitHub Profile](https://github.com/AishwaryaAshtekar)
-- Pavan Kalyan Mahanty : [Personal Website](https://pavan-links.netlify.app/)
+- Pavan Kalyan Mahanty : [Profile Card](https://pavan-links.netlify.app/)
