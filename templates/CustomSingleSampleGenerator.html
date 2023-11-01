@@ -1,0 +1,1525 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Convert User Input and Dropdown Selection to JSON</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Caveat">
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Indie+Flower">
+  <style>
+    body {
+      display: block;
+      align-items: center;
+      justify-content: center;
+      max-width: 70%;
+
+    }
+
+    .hidden {
+      display: none;
+    }
+
+    form {
+      display: grid;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+      margin-left: 35%;
+      max-width: 70%;
+      border: 3.5px solid red;
+      -webkit-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+      -moz-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+      box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+    }
+
+    fieldset {
+      margin: 5px;
+      border: 1px solid black;
+    }
+
+    button {
+      margin: 10px;
+      border: 2px solid black;
+      padding: 5px;
+      transition: transform .2s;
+      border-radius: 7.5px;
+      font-size: 1.5rem;
+    }
+
+    button:hover {
+      transform: scale(1.05)
+    }
+
+    .tab {
+      border: 1px solid #ddd;
+      margin-top: 1em;
+      width: 500px;
+    }
+
+    .tab h1 {
+      font-size: 14px;
+      text-align: left;
+
+    }
+
+    .tab h1 span {
+      display: inline;
+      border: 1px solid #fff;
+      background: #fff;
+      padding: 5px 5px;
+      margin-left: 2px;
+      position: relative;
+      top: -1.1em;
+    }
+
+    .tab p input {
+      padding: 2px;
+      width: 25%;
+      border: 1px solid black;
+      margin-left: 5px;
+    }
+
+    select {
+      padding: 2px;
+      width: 35%;
+      border-radius: 10px;
+      border: 1px solid black;
+    }
+
+    input {
+      padding: 2px;
+      margin: 3px;
+    }
+
+    .required {
+      padding: 2px;
+    }
+
+    .heading {
+      font-family: Arial, sans-serif;
+      font-size: 24px;
+      color: #333;
+      background-color: #f0f0f0;
+      padding: 10px;
+      border-radius: 1px;
+      text-align: center;
+      margin-left: 35%;
+      -webkit-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+      -moz-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+      box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+
+    }
+
+    ul {
+      transform: translateX(55%);
+      max-width: max-content;
+      display: flex;
+    }
+
+    ul.navbar {
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: #f0f0f0;
+      border: 3px solid black;
+      border-radius: 10px;
+      /* Light gray background */
+    }
+
+    li.nav-item {
+      float: left;
+      margin-right: 20px;
+      margin-left: 1%;
+
+    }
+
+    li.nav-item a {
+      display: block;
+      color: #333;
+      padding: 10px 15px;
+      text-decoration: none;
+    }
+
+    li.nav-item a:hover {
+      background-color: #0077b6;
+      max-width: max-content;
+      color: #ffffff;
+    }
+  </style>
+</head>
+
+<body>
+  <ul class="navbar">
+    <li class="nav-item"><a href="/MT103_Samples_Combination">MT103_Samples_Combination</a></li>
+    <li class="nav-item"><a href="/CustomSingleSampleGenerator">CustomSingleSampleGenerator</a></li>
+    <li class="nav-item"><a href="/SampleMaintainer">SampleMaintainer</a></li>
+  </ul>
+  <h1 class="heading">CustomSingleSampleGenerator</h1>
+  <form>
+
+    <h1>MT103 Header</h1>
+    <div class="tab">
+      <h1><span class="aestrik">Sender(Block1)*</span></h1>
+      <p><input class="required" id="Header_sender" placeholder="e.g., BARCGB22XXXX" required maxlength="16"></p>
+    </div>
+    <div class="tab">
+      <h1><span class="aestrik">Incoming or Outgoing WRT SWIFT Network(Block 2)*</span></h1>
+      <p><select id="Header_incoming_or_outgoing">
+          <option value="I">I</option>
+          <option value="O">O</option>
+        </select></p>
+      <p>
+    </div>
+
+    <div class="tab">
+      <h1><span class="aestrik">Message Type(Block 2)*</span></h1>
+      <p><input class="required" id="Header_message" placeholder="e.g., 103" required></p>
+    </div>
+
+    <div class="tab">
+      <h1><span class="aestrik">Receiver(Block 2)*</span></h1>
+      <p><input class="required" id="Header_receiver" placeholder="e.g., RBSIGB2LXXXX" required></p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Transaction Reference(Block 3 tag 121)</span></h1>
+      <p><input id="Header_transaction_reference"
+          placeholder="e.g., 174c245f-2682-4291-ad67-2a41e530cd27" >
+      </p>
+    </div>
+
+    <h1>MT103:</h1>
+
+    <div class="tab">
+      <h1><span class="aestrik">Sender's Reference(:20:)*:</span></h1>
+      <p><input class="required" id="referenceInput" placeholder="Ref254" maxlength="16" required></p>
+    </div>
+    <script>
+      function generateUniqueValue() {
+        var currentDateTime = new Date().toISOString().replace(/[-T:.Z]/g, '');
+        var date = currentDateTime.substr(2, 10);
+        var now = new Date();
+        var seconds = now.getSeconds();
+        var milliseconds = now.getMilliseconds();
+        var microseconds = performance.now() * 1000; // Multiply by 1000 to get microseconds
+        var uniqueValue = `${milliseconds}`;
+        document.getElementById('referenceInput').value = '103' + date + uniqueValue;
+      }
+
+      // Call the generateUniqueValue function every second (1000 milliseconds)
+      setInterval(generateUniqueValue, 1000);
+    </script>
+
+    <div class="tab">
+      <h1><span>Time indication(:13C:):</span></h1>
+      <p>
+        <select id="F13C_Code_Dropdown">
+          <option value="">Select an option</option>
+          <option value="CLSTIME">CLSTIME:CLS Time </option>
+          <option value="RNCTIME">RNCTIME:Receive Time </option>
+          <option value="SNDTIME">SNDTIME:Send Time</option>
+        </select>
+      </p>
+      <p><input id="timeIndication13c" placeholder="0915" oninput="this.className = ''" maxlength="9"></p>
+      <p><select id="F13C_sign_Dropdown">
+          <option value="">Select an option</option>
+          <option value="+">+</option>
+          <option value="-">-</option>
+        </select></p>
+      <p><input id="offset13c" placeholder="0100" oninput="this.className = ''" maxlength="10"></p>
+    </div>
+
+
+
+    <div class="tab">
+      <p>
+      <h1><span class="aestrik">Bank Operation Code(:23B:)*:</span></h1>
+      </p>
+      <select id="F23BDropdown" required>
+        <option value="CRED">CRED:Normal credit transfer</option>
+        <option value="CRTS">CRTS:Test message</option>
+        <option value="SPAY">SPAY:SWIFTPay</option>
+        <option value="SPRI">SPRI:Priority</option>
+        <option value="SSTD">SSTD:Standard</option>
+      </select>
+    </div>
+
+    <div class="tab">
+      <h1><span>Instruction Code(:23E:):</span></h1>
+      <select id="Code23EDropdown"  onchange="toggleAdditionalInfo23E()" >
+        <option value=""> Select option</option>
+        <option value="CHQB">Cheque</option>
+        <option value="CORT">Corporate Trade</option>
+        <option value="HOLD">Hold</option>
+        <option value="INTC">Intra-Company Payment</option>
+        <option value="PHOB">Phone Beneficiary</option>
+        <option value="PHOI">Phone Intermediary</option>
+        <option value="PHON">Telephone</option>
+        <option value="REPA">Related Payment</option>
+        <option value="SDVA">Same Day Value</option>
+        <option value="TELB">TELB-Telecommunication</option>
+        <option value="TELE">TELE-Telecommunication</option>
+        <option value="TELI">TELI-Telecommunication</option>
+      </select>
+    </div>
+    <div class="tab">
+      <p><input id="AdditionalInfo23E" placeholder="Additional Information" oninput="this.className = ''"
+          class="hidden" maxlength="30">
+      </p>
+    </div>
+    <script>
+      function toggleAdditionalInfo23E() {
+        var Code23EDropdownType = document.getElementById("Code23EDropdown").value;
+
+        var FAdditionalInfo23E = document.getElementById("AdditionalInfo23E");
+
+        // Hide all fields
+        FAdditionalInfo23E.classList.add("hidden");
+
+
+        // Show fields based on the selected option
+        if (Code23EDropdownType === "") {
+          FAdditionalInfo23E.classList.add("hidden");
+
+        } else {
+          FAdditionalInfo23E.classList.remove("hidden");
+
+        }
+      }
+    </script>
+    <div class="tab">
+      <h1><span>Transaction Type Code(:26T:):</span></h1>
+      <p><input id="TransactionTypeCode26T" placeholder="K90" oninput="this.className = ''" maxlength="3"
+          oninput="checkInputLength('TransactionTypeCode26T', 3)"></p>
+    </div>
+
+    <div class="tab">
+      <h1><span class="aestrik">Value Date/Currency/Interbank Settled Amount(:32A:)*:</span></h1>
+      <p><input type="date" id="F32A_selectedDate" required></p>
+      <p><input type="text" id="Currencycode32A" placeholder="Enter a currency code" required maxlength="4"></p>
+      <p>
+      <ul id="suggestions32A"></ul>
+      </p>
+      <p><input id="Amount32A" class="required" placeholder="Amount" oninput="this.className = ''" maxlength="8"
+          type="number" required>
+      </p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Currency/Instructed Amount(:33B:):</span></h1>
+      <p><input type="text" id="Currencycode33B" placeholder="Enter a currency code" maxlength="4"></p>
+      <p>
+      <ul id="suggestions33B"></ul>
+      </p>
+      <p><input id="Amount33B" placeholder="Amount" oninput="this.className = ''" maxlength="8" type="number"></p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Exchange Rate(:36:):</span></h1>
+      <p><input id="ExchangeRate36" placeholder="Rate" oninput="this.className = ''" maxlength="6"></p>
+    </div>
+
+    <div class="tab">
+      <p>
+      <h1><span>Ordering Customer-Option (:50a:)*:</span></h1>
+      </p>
+      <select id="orderingCustomerType" onchange="toggleFields50a()" required>
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Ordering Customer-OptionA">Ordering Customer-OptionA (:50A:)</option>
+        <option value="Ordering Customer-OptionF">Ordering Customer-OptionF (:50F:)</option>
+        <option value="Ordering Customer-OptionK">Ordering Customer-OptionK (:50K:)</option>
+      </select>
+      <p><input id="account50a" placeholder="Account" oninput="this.className = ''" maxlength="34" class="hidden"
+          required></p>
+      <p><input id="identifierCode50a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifier50a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddressF50a" placeholder="Number/Name and Address" oninput="this.className = ''"
+          maxlength="140" class="hidden" required></p>
+      <p><input id="nameAndAddress50a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+    </div>
+    <script>
+      function toggleFields50a() {
+        var orderingCustomerType = document.getElementById("orderingCustomerType").value;
+        var account50a = document.getElementById("account50a");
+        var identifierCode50a = document.getElementById("identifierCode50a");
+        var partyIdentifier50a = document.getElementById("partyIdentifier50a");
+        var nameAndAddressF50a = document.getElementById("nameAndAddressF50a");
+        var nameAndAddress50a = document.getElementById("nameAndAddress50a");
+
+        // Hide all fields
+        account50a.classList.add("hidden");
+        identifierCode50a.classList.add("hidden");
+        partyIdentifier50a.classList.add("hidden");
+        nameAndAddressF50a.classList.add("hidden");
+        nameAndAddress50a.classList.add("hidden");
+
+        // Show fields based on the selected option
+        if (orderingCustomerType === "Ordering Customer-OptionA") {
+          account50a.classList.remove("hidden");
+          identifierCode50a.classList.remove("hidden");
+
+          account50a.setAttribute("required", true);
+          identifierCode50a.setAttribute("required", true);
+          partyIdentifier50a.setAttribute("required", false);
+          nameAndAddressF50a.setAttribute("required", false);
+          nameAndAddress50a.setAttribute("required", false);
+        } else if (orderingCustomerType === "Ordering Customer-OptionF") {
+          partyIdentifier50a.classList.remove("hidden");
+          nameAndAddressF50a.classList.remove("hidden");
+
+          account50a.setAttribute("required", false);
+          identifierCode50a.setAttribute("required", false);
+          partyIdentifier50a.setAttribute("required", true);
+          nameAndAddressF50a.setAttribute("required", true);
+          nameAndAddress50a.setAttribute("required", false);
+        } else if (orderingCustomerType === "Ordering Customer-OptionK") {
+          account50a.classList.remove("hidden");
+          nameAndAddress50a.classList.remove("hidden");
+
+          account50a.setAttribute("required", true);
+          nameAndAddress50a.setAttribute("required", true);
+          identifierCode50a.setAttribute("required", false);
+          partyIdentifier50a.setAttribute("required", false);
+          nameAndAddressF50a.setAttribute("required", false);
+        }
+      }
+    </script>
+    <div class="tab">
+      <h1><span>Sending Institution (:51A:):</span></h1>
+      <p><input id="PartyIdentifier51A_1" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34">
+      </p>
+      <p><input id="PartyIdentifier51A_2" placeholder="Party Identifier" oninput="this.className = ''" maxlength="10">
+      </p>
+    </div>
+
+    <div class="tab">
+      <p>
+      <h1><span>Ordering Institution-Option (:52a:):</span></h1>
+      </p>
+      <select id="institutionType" onchange="toggleFields52a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Ordering Institution-OptionA">Ordering Institution-OptionA (:52A:)</option>
+        <option value="Ordering Institution-OptionD">Ordering Institution-OptionD (:52D:)</option>
+      </select>
+      <p><input id="partyIdentifier52a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode52a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifier52aD" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress52a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+    </div>
+    <script>
+      function toggleFields52a() {
+        var institutionType = document.getElementById("institutionType").value;
+        var partyIdentifier52a = document.getElementById("partyIdentifier52a");
+        var identifierCode52a = document.getElementById("identifierCode52a");
+        var partyIdentifier52aD = document.getElementById("partyIdentifier52aD");
+        var nameAndAddress52a = document.getElementById("nameAndAddress52a");
+
+        // Hide all fields
+        partyIdentifier52a.classList.add("hidden");
+        identifierCode52a.classList.add("hidden");
+        partyIdentifier52aD.classList.add("hidden");
+        nameAndAddress52a.classList.add("hidden");
+
+
+        // Show fields based on the selected option
+        if (institutionType === "Ordering Institution-OptionA") {
+          partyIdentifier52a.classList.remove("hidden");
+          identifierCode52a.classList.remove("hidden");
+
+          partyIdentifier52a.setAttribute("required", true);
+          identifierCode52a.setAttribute("required", true);
+          partyIdentifier52aD.setAttribute("required", false);
+          nameAndAddress52a.setAttribute("required", false);
+
+        } else if (institutionType === "Ordering Institution-OptionD") {
+          partyIdentifier52aD.classList.remove("hidden");
+          nameAndAddress52a.classList.remove("hidden");
+
+          partyIdentifier52a.setAttribute("required", false);
+          identifierCode52a.setAttribute("required", false);
+          partyIdentifier52aD.setAttribute("required", true);
+          nameAndAddress52a.setAttribute("required", true);
+
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Sender's Correspondent Option (:53a:):</span></h1>
+      </p>
+      <select id="SendersCorrespondentType" onchange="toggleFields53a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Senders Correspondent-OptionA">Sender's Correspondent-OptionA (:53A:):</option>
+        <option value="Senders Correspondent-OptionB">Sender's Correspondent-OptionA (:53B:):</option>
+        <option value="Senders Correspondent-OptionD">Sender's Correspondent-OptionD (:53D:):</option>
+      </select>
+      <p><input id="partyIdentifier53a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode53a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifierB53a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress53a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+      <p><input id="location53a" placeholder="Location" oninput="this.className = ''" maxlength="10" class="hidden"
+          required></p>
+    </div>
+    <script>
+      function toggleFields53a() {
+        var SendersCorrespondentType = document.getElementById("SendersCorrespondentType").value;
+        var partyIdentifier53a = document.getElementById("partyIdentifier53a");
+        var identifierCode53a = document.getElementById("identifierCode53a");
+        var partyIdentifierB53a = document.getElementById("partyIdentifierB53a");
+        var nameAndAddress53a = document.getElementById("nameAndAddress53a");
+        var location53a = document.getElementById("location53a");
+
+        // Hide all fields
+        partyIdentifier53a.classList.add("hidden");
+        identifierCode53a.classList.add("hidden");
+        partyIdentifierB53a.classList.add("hidden");
+        nameAndAddress53a.classList.add("hidden");
+        location53a.classList.add("hidden");
+
+        switch (SendersCorrespondentType) {
+          case "Senders Correspondent-OptionA":
+            partyIdentifier53a.classList.remove("hidden");
+            identifierCode53a.classList.remove("hidden");
+
+            partyIdentifier53a.setAttribute("required", true);
+            identifierCode53a.setAttribute("required", true);
+            partyIdentifierB53a.setAttribute("required", false);
+            nameAndAddress53a.setAttribute("required", false);
+            location53a.setAttribute("required", false);
+            break;
+          case "Senders Correspondent-OptionB":
+            partyIdentifierB53a.classList.remove("hidden");
+            location53a.classList.remove("hidden");
+
+            partyIdentifier53a.setAttribute("required", false);
+            identifierCode53a.setAttribute("required", false);
+            partyIdentifierB53a.setAttribute("required", true);
+            nameAndAddress53a.setAttribute("required", false);
+            location53a.setAttribute("required", true);
+            break;
+          case "Senders Correspondent-OptionD":
+            partyIdentifier53a.classList.remove("hidden");
+            nameAndAddress53a.classList.remove("hidden");
+
+            partyIdentifier53a.setAttribute("required", true);
+            identifierCode53a.setAttribute("required", false);
+            partyIdentifierB53a.setAttribute("required", false);
+            nameAndAddress53a.setAttribute("required", true);
+            location53a.setAttribute("required", false);
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Receiver's Correspondent Option (:54a:):</span></h1>
+      </p>
+      <select id="ReceiversCorrespondentType" onchange="toggleFields54a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Receivers Correspondent-OptionA">Receiver's Correspondent-OptionA (:54A:):</option>
+        <option value="Receivers Correspondent-OptionB">Receiver's Correspondent-OptionA (:54B:):</option>
+        <option value="Receivers Correspondent-OptionD">Receiver's Correspondent-OptionD (:54D:):</option>
+      </select>
+      <p><input id="partyIdentifier54a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode54a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifierB54a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress54a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+      <p><input id="location54a" placeholder="Location" oninput="this.className = ''" maxlength="10" class="hidden"
+          required></p>
+    </div>
+    <script>
+      function toggleFields54a() {
+        var ReceiversCorrespondentType = document.getElementById("ReceiversCorrespondentType").value;
+        var partyIdentifier54a = document.getElementById("partyIdentifier54a");
+        var identifierCode54a = document.getElementById("identifierCode54a");
+        var partyIdentifierB54a = document.getElementById("partyIdentifierB54a");
+        var nameAndAddress54a = document.getElementById("nameAndAddress54a");
+        var location54a = document.getElementById("location54a");
+
+        // Hide all fields
+        partyIdentifier54a.classList.add("hidden");
+        identifierCode54a.classList.add("hidden");
+        partyIdentifierB54a.classList.add("hidden");
+        nameAndAddress54a.classList.add("hidden");
+        location54a.classList.add("hidden");
+
+        switch (ReceiversCorrespondentType) {
+          case "Receivers Correspondent-OptionA":
+            partyIdentifier54a.classList.remove("hidden");
+            identifierCode54a.classList.remove("hidden");
+
+            partyIdentifier54a.setAttribute("required", true);
+            identifierCode54a.setAttribute("required", true);
+            partyIdentifierB54a.setAttribute("required", false);
+            nameAndAddress54a.setAttribute("required", false);
+            location54a.setAttribute("required", false);
+
+            break;
+          case "Receivers Correspondent-OptionB":
+            partyIdentifierB54a.classList.remove("hidden");
+            location54a.classList.remove("hidden");
+
+            partyIdentifier54a.setAttribute("required", false);
+            identifierCode54a.setAttribute("required", false);
+            partyIdentifierB54a.setAttribute("required", true);
+            nameAndAddress54a.setAttribute("required", false);
+            location54a.setAttribute("required", true);
+            break;
+          case "Receivers Correspondent-OptionD":
+            partyIdentifier54a.classList.remove("hidden");
+            nameAndAddress54a.classList.remove("hidden");
+
+            partyIdentifier54a.setAttribute("required", true);
+            identifierCode54a.setAttribute("required", false);
+            partyIdentifierB54a.setAttribute("required", false);
+            nameAndAddress54a.setAttribute("required", true);
+            location54a.setAttribute("required", false);
+
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Third Reimbursement Institution Option (:55a:):</span></h1>
+      </p>
+      <select id="ThirdReimbursementInstitutionType" onchange="toggleFields55a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Third Reimbursement Institution-OptionA">Third Reimbursement Institution-OptionA (:55A:):
+        </option>
+        <option value="Third Reimbursement Institution-OptionB">Third Reimbursement Institution-OptionA (:55B:):
+        </option>
+        <option value="Third Reimbursement Institution-OptionD">Third Reimbursement Institution-OptionD (:55D:):
+        </option>
+      </select>
+
+      <p><input id="partyIdentifier55a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode55a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifierB55a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress55a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+      <p><input id="location55a" placeholder="Location" oninput="this.className = ''" maxlength="10" class="hidden"
+          required></p>
+    </div>
+    <script>
+      function toggleFields55a() {
+        var ThirdReimbursementInstitutionType = document.getElementById("ThirdReimbursementInstitutionType").value;
+        var partyIdentifier55a = document.getElementById("partyIdentifier55a");
+        var identifierCode55a = document.getElementById("identifierCode55a");
+        var partyIdentifierB55a = document.getElementById("partyIdentifierB55a");
+        var nameAndAddress55a = document.getElementById("nameAndAddress55a");
+        var location55a = document.getElementById("location55a");
+
+        // Hide all fields
+        partyIdentifier55a.classList.add("hidden");
+        identifierCode55a.classList.add("hidden");
+        partyIdentifierB55a.classList.add("hidden");
+        nameAndAddress55a.classList.add("hidden");
+        location55a.classList.add("hidden");
+
+        switch (ThirdReimbursementInstitutionType) {
+          case "Third Reimbursement Institution-OptionA":
+            partyIdentifier55a.classList.remove("hidden");
+            identifierCode55a.classList.remove("hidden");
+
+            partyIdentifier55a.setAttribute("required", true);
+            identifierCode55a.setAttribute("required", true);
+            partyIdentifierB55a.setAttribute("required", false);
+            nameAndAddress55a.setAttribute("required", false);
+            location55a.setAttribute("required", false);
+
+            break;
+          case "Third Reimbursement Institution-OptionB":
+            partyIdentifierB55a.classList.remove("hidden");
+            location55a.classList.remove("hidden");
+
+            partyIdentifier55a.setAttribute("required", false);
+            identifierCode55a.setAttribute("required", false);
+            partyIdentifierB55a.setAttribute("required", true);
+            nameAndAddress55a.setAttribute("required", false);
+            location55a.setAttribute("required", true);
+            break;
+          case "Third Reimbursement Institution-OptionD":
+            partyIdentifier55a.classList.remove("hidden");
+            nameAndAddress55a.classList.remove("hidden");
+
+            partyIdentifier55a.setAttribute("required", true);
+            identifierCode55a.setAttribute("required", false);
+            partyIdentifierB55a.setAttribute("required", false);
+            nameAndAddress55a.setAttribute("required", true);
+            location55a.setAttribute("required", false);
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Intermediary Institution Option (:56a:):</span></h1>
+      </p>
+      <select id="IntermediaryInstitutionType" onchange="toggleFields56a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Intermediary Institution-OptionA">Intermediary Institution-OptionA (:56A:):</option>
+        <option value="Intermediary Institution-OptionC">Intermediary Institution-OptionA (:56C:):</option>
+        <option value="Intermediary Institution-OptionD">Intermediary Institution-OptionD (:56D:):</option>
+      </select>
+
+      <p><input id="partyIdentifier56a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode56a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifierC56a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress56a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+    </div>
+    <script>
+      function toggleFields56a() {
+        var IntermediaryInstitutionType = document.getElementById("IntermediaryInstitutionType").value;
+        var partyIdentifier56a = document.getElementById("partyIdentifier56a");
+        var identifierCode56a = document.getElementById("identifierCode56a");
+        var partyIdentifierC56a = document.getElementById("partyIdentifierC56a");
+        var nameAndAddress56a = document.getElementById("nameAndAddress56a");
+
+        // Hide all fields
+        partyIdentifier56a.classList.add("hidden");
+        identifierCode56a.classList.add("hidden");
+        partyIdentifierC56a.classList.add("hidden");
+        nameAndAddress56a.classList.add("hidden");
+
+        switch (IntermediaryInstitutionType) {
+          case "Intermediary Institution-OptionA":
+            partyIdentifier56a.classList.remove("hidden");
+            identifierCode56a.classList.remove("hidden");
+
+            partyIdentifier56a.setAttribute("required", true);
+            identifierCode56a.setAttribute("required", true);
+            partyIdentifierC56a.setAttribute("required", false);
+            nameAndAddress56a.setAttribute("required", false);
+            break;
+          case "Intermediary Institution-OptionC":
+            partyIdentifierC56a.classList.remove("hidden");
+
+            partyIdentifier56a.setAttribute("required", false);
+            identifierCode56a.setAttribute("required", false);
+            partyIdentifierC56a.setAttribute("required", true);
+            nameAndAddress56a.setAttribute("required", false);
+            break;
+          case "Intermediary Institution-OptionD":
+            partyIdentifier56a.classList.remove("hidden");
+            nameAndAddress56a.classList.remove("hidden");
+
+            partyIdentifier56a.setAttribute("required", true);
+            identifierCode56a.setAttribute("required", false);
+            partyIdentifierC56a.setAttribute("required", false);
+            nameAndAddress56a.setAttribute("required", true);
+
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Account With Institution Option (:57a:):</span></h1>
+      </p>
+      <select id="AccountWithInstitutionType" onchange="toggleFields57a()">
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Account With Institution-OptionA">Account With Institution-OptionA (:57A:):</option>
+        <option value="Account With Institution-OptionB">Account With Institution-OptionB (:57B:):</option>
+        <option value="Account With Institution-OptionC">Account With Institution-OptionC (:57C:):</option>
+        <option value="Account With Institution-OptionD">Account With Institution-OptionD (:57D:):</option>
+      </select>
+
+      <p><input id="partyIdentifier57a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="34"
+          class="hidden" required></p>
+      <p><input id="identifierCode57a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="partyIdentifierB57a" placeholder="Party Identifier" oninput="this.className = ''" maxlength="35"
+          class="hidden" required></p>
+      <p><input id="nameAndAddress57a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+      <p><input id="location57a" placeholder="Location" oninput="this.className = ''" maxlength="10" class="hidden"
+          required></p>
+    </div>
+    <script>
+      function toggleFields57a() {
+        var AccountWithInstitutionType = document.getElementById("AccountWithInstitutionType").value;
+        var partyIdentifier57a = document.getElementById("partyIdentifier57a");
+        var identifierCode57a = document.getElementById("identifierCode57a");
+        var partyIdentifierB57a = document.getElementById("partyIdentifierB57a");
+        var nameAndAddress57a = document.getElementById("nameAndAddress57a");
+        var location57a = document.getElementById("location57a");
+        // Hide all fields
+        partyIdentifier57a.classList.add("hidden");
+        identifierCode57a.classList.add("hidden");
+        partyIdentifierB57a.classList.add("hidden");
+        nameAndAddress57a.classList.add("hidden");
+        location57a.classList.add("hidden");
+
+        switch (AccountWithInstitutionType) {
+          case "Account With Institution-OptionA":
+            partyIdentifier57a.classList.remove("hidden");
+            identifierCode57a.classList.remove("hidden");
+
+            partyIdentifier57a.setAttribute("required", true);
+            identifierCode57a.setAttribute("required", true);
+            partyIdentifierB57a.setAttribute("required", false);
+            nameAndAddress57a.setAttribute("required", false);
+            location57a.setAttribute("required", false);
+            break;
+          case "Account With Institution-OptionB":
+            partyIdentifierB57a.classList.remove("hidden");
+            location57a.classList.remove("hidden");
+
+            partyIdentifier57a.setAttribute("required", false);
+            identifierCode57a.setAttribute("required", false);
+            partyIdentifierB57a.setAttribute("required", true);
+            nameAndAddress57a.setAttribute("required", false);
+            location57a.setAttribute("required", true);
+            break;
+          case "Account With Institution-OptionC":
+            partyIdentifier57a.classList.remove("hidden");
+
+            partyIdentifier57a.setAttribute("required", true);
+            identifierCode57a.setAttribute("required", false);
+            partyIdentifierB57a.setAttribute("required", false);
+            nameAndAddress57a.setAttribute("required", false);
+            location57a.setAttribute("required", false);
+            break;
+          case "Account With Institution-OptionD":
+            partyIdentifier57a.classList.remove("hidden");
+            nameAndAddress57a.classList.remove("hidden");
+
+            partyIdentifier57a.setAttribute("required", false);
+            identifierCode57a.setAttribute("required", true);
+            partyIdentifierB57a.setAttribute("required", false);
+            nameAndAddress57a.setAttribute("required", true);
+            location57a.setAttribute("required", false);
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+
+    <div class="tab">
+      <p>
+      <h1><span>Beneficiary Customer Option (:59a:)*:</span></h1>
+      </p>
+      <select id="BeneficiaryCustomerType" onchange="toggleFields59a()" required>
+        <option value="">Select an option</option> <!-- Blank option -->
+        <option value="Beneficiary Customer-NoLetterOption">Beneficiary Customer-NoLetterOption (:59:):</option>
+        <option value="Beneficiary Customer-OptionA">Beneficiary Customer-OptionA (:59A:):</option>
+        <option value="Beneficiary Customer-OptionF">Beneficiary Customer-OptionF (:59F:):</option>
+      </select>
+
+      <p><input id="account59a" placeholder="Account" oninput="this.className = ''" maxlength="34" class="hidden"
+          required></p>
+      <p><input id="nameAndAddress59a" placeholder="Name and Address" oninput="this.className = ''" maxlength="140"
+          class="hidden" required></p>
+      <p><input id="identifierCode59a" placeholder="Identifier Code" oninput="this.className = ''" maxlength="10"
+          class="hidden" required></p>
+      <p><input id="nameAndAddressF59a" placeholder="Number/Name and Address" oninput="this.className = ''"
+          maxlength="140" class="hidden" required></p>
+    </div>
+    <script>
+      function toggleFields59a() {
+        var BeneficiaryCustomerType = document.getElementById("BeneficiaryCustomerType").value;
+        var account59a = document.getElementById("account59a");
+        var nameAndAddress59a = document.getElementById("nameAndAddress59a");
+        var identifierCode59a = document.getElementById("identifierCode59a");
+        var nameAndAddressF59a = document.getElementById("nameAndAddressF59a");
+        // Hide all fields
+        account59a.classList.add("hidden");
+        nameAndAddress59a.classList.add("hidden");
+        identifierCode59a.classList.add("hidden");
+        nameAndAddress59a.classList.add("hidden");
+        nameAndAddressF59a.classList.add("hidden");
+
+        switch (BeneficiaryCustomerType) {
+          case "Beneficiary Customer-NoLetterOption":
+            account59a.classList.remove("hidden");
+            nameAndAddress59a.classList.remove("hidden");
+
+            account59a.setAttribute("required", true);
+            nameAndAddress59a.setAttribute("required", true);
+            identifierCode59a.setAttribute("required", false);
+            nameAndAddressF59a.setAttribute("required", true);
+            break;
+          case "Beneficiary Customer-OptionA":
+            account59a.classList.remove("hidden");
+            identifierCode59a.classList.remove("hidden");
+
+            account59a.setAttribute("required", true);
+            nameAndAddress59a.setAttribute("required", false);
+            identifierCode59a.setAttribute("required", true);
+            nameAndAddressF59a.setAttribute("required", false);
+            break;
+          case "Beneficiary Customer-OptionF":
+            account59a.classList.remove("hidden");
+            nameAndAddressF59a.classList.remove("hidden");
+
+            account59a.setAttribute("required", true);
+            identifierCode59a.setAttribute("required", false);
+            nameAndAddress59a.setAttribute("required", false);
+            nameAndAddressF59a.setAttribute("required", true);
+            break;
+          default:
+            // Handle any other cases or provide a default behavior
+            break;
+        }
+      }
+    </script>
+    <div class="tab">
+      <h1><span>Remittance Information (:70:):</span></h1>
+      <p><input id="Narrative70" placeholder="Narrative" oninput="this.className = ''" maxlength="140"></p>
+    </div>
+    <!--<div class="tab">Details of Charges (:71A:):<span class="aestrik">*</span>
+              <p><input id="chargesInfo71A" class="required" placeholder="chargesInfo" oninput="this.className = ''" maxlength="3"></p>
+            </div>-->
+    <div class="tab">
+      <h1><span>Details of Charges (:71A:)*:</span></h1>
+      <p>
+        <select id="chargesInfo71A" required>
+          <option value=""> Select an option</option>
+          <option value="BEN">BEN-Beneficiary</option>
+          <option value="OUR">OUR-Our customer charged</option>
+          <option value="SHA">SHA-Shared charges</option>
+        </select>
+      </p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Sender's Charges (:71F:)</span></h1>
+      <p><input type="text" id="Currencycode71F" placeholder="Enter a currency code"></p>
+      <p>
+      <ul id="suggestions71F"></ul>
+      </p>
+      <p><input id="Amount71F" placeholder="Amount e.g. 8" oninput="this.className = ''" maxlength="15"></p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Receiver's Charges (:71G:):</span></h1>
+      <p><input type="text" id="Currencycode71G" placeholder="Enter a currency code"></p>
+      <p>
+      <ul id="suggestions71G"></ul>
+      </p>
+      <p><input id="Amount71G" placeholder="Amount e.g. 8" oninput="this.className = ''" maxlength="15"></p>
+    </div>
+
+    <div class="tab">
+      <h1><span>Sender to Receiver Information (:72:):</span></h1>
+      <p><input id="SendertoReceiverInfo72" placeholder="Narrative Structured Format" oninput="this.className = ''"
+          maxlength="210"></p>
+    </div>
+    <div class="tab">
+      <h1><span>Regulatory Reporting (:77B:):</span></h1>
+      <p><input id="RegulatoryReporting77B" placeholder="Narrative" oninput="this.className = ''" maxlength="105"></p>
+    </div>
+
+    <button id="saveButton">Save MT103 sample</button>
+    <a id="downloadLink" style="display: none">Yaay, sample is generated please click to download</a>
+  </form>
+
+  <script>
+    var Currencycode32A = document.getElementById("Currencycode32A");
+    var suggestions32A = document.getElementById("suggestions32A");
+    initializeCurrencySuggestions(Currencycode32A, suggestions32A);
+
+    var Currencycode33B = document.getElementById("Currencycode33B");
+    var suggestions33B = document.getElementById("suggestions33B");
+    initializeCurrencySuggestions(Currencycode33B, suggestions33B);
+
+    var Currencycode71F = document.getElementById("Currencycode71F");
+    var suggestions71F = document.getElementById("suggestions71F");
+    initializeCurrencySuggestions(Currencycode71F, suggestions71F);
+
+    var Currencycode71G = document.getElementById("Currencycode71G");
+    var suggestions71G = document.getElementById("suggestions71G");
+    initializeCurrencySuggestions(Currencycode71G, suggestions71G);
+
+    function initializeCurrencySuggestions(user_currencyInput, user_suggestionsList) {
+      const currencyCodes = [
+        { code: "JMD", name: "JAMAICAN DOLLAR" },
+        { code: "USD", name: "US DOLLAR" },
+        { code: "EUR", name: "EURO" },
+        { code: "XUA", name: "ADB UNIT OF ACCOUNT" },
+        { code: "CRC", name: "COSTA RICAN COLON" },
+        { code: "GBP", name: "POUND STERLING" },
+        { code: "XBB", name: "EUROPEAN MONETARY UNIT (EMU-6)" },
+        { code: "FJD", name: "FIJI DOLLAR" },
+        { code: "BTN", name: "NGULTRUM" },
+        { code: "ZAR", name: "RAND" },
+        { code: "XOF", name: "CFA FRANC BCEAO" },
+        { code: "OMR", name: "RIAL OMANI" },
+        { code: "DKK", name: "DANISH KRONE" },
+        { code: "MGA", name: "MALAGASY ARIARY" },
+        { code: "KWD", name: "KUWAITI DINAR" },
+        { code: "AUD", name: "AUSTRALIAN DOLLAR" },
+        { code: "KRW", name: "WON" },
+        { code: "NOK", name: "NORWEGIAN KRONE" },
+        { code: "BYR", name: "BELARUSSIAN RUBLE" },
+        { code: "MYR", name: "MALAYSIAN RINGGIT" },
+        { code: "GEL", name: "LARI" },
+        { code: "PYG", name: "GUARANI" },
+        { code: "XXX", name: "TRANSACTIONS WITHOUT CURRENCY" },
+        { code: "VND", name: "DONG" },
+        { code: "RSD", name: "SERBIAN DINAR" },
+        { code: "SRD", name: "SURINAM DOLLAR" },
+        { code: "MXN", name: "MEXICAN PESO" },
+        { code: "IRR", name: "IRANIAN RIAL" },
+        { code: "ARS", name: "ARGENTINE PESO" },
+        { code: "XCD", name: "EAST CARIBBEAN DOLLAR" },
+        { code: "BAM", name: "CONVERTIBLE MARKS" },
+        { code: "XAF", name: "CFA FRANC BEAC" },
+        { code: "AMD", name: "ARMENIAN DRAM" },
+        { code: "XSU", name: "SUCRE (UNIT OF ACCOUNT)" },
+        { code: "UZS", name: "UZBEKISTAN SUM" },
+        { code: "TWD", name: "NEW TAIWAN DOLLAR" },
+        { code: "LKR", name: "SRI LANKA RUPEE" },
+        { code: "PAB", name: "BALBOA" },
+        { code: "SOS", name: "SOMALI SHILLING" },
+        { code: "LAK", name: "KIP" },
+        { code: "AWG", name: "ARUBAN FLORIN" },
+        { code: "SGD", name: "SINGAPORE DOLLAR" },
+        { code: "GTQ", name: "QUETZAL" },
+        { code: "CDF", name: "FRANC CONGOLAIS" },
+        { code: "KHR", name: "RIEL" },
+        { code: "AUD", name: "AUD" },
+        { code: "NPR", name: "NEPALESE RUPEE" },
+        { code: "ILS", name: "NEW ISRAELI SHEKEL" },
+        { code: "PHP", name: "PHILIPPINE PESO" },
+        { code: "XBD", name: "EUROPEAN UNIT OF ACCOUNT-17 (EUA-17)" },
+        { code: "SEK", name: "SWEDISH KRONA" },
+        { code: "NAD", name: "NAMIBIA DOLLAR" },
+        { code: "LYD", name: "LIBYAN DINAR" },
+        { code: "ZMW", name: "ZAMBIAN KWACHA" },
+        { code: "GHS", name: "GHANA CEDI" },
+        { code: "BGN", name: "BULGARIAN LEV" },
+        { code: "XBC", name: "EUROPEAN UNIT OF ACCOUNT-9 (EUA-9)" },
+        { code: "BDT", name: "TAKA" },
+        { code: "SBD", name: "SOLOMON ISLANDS DOLLAR" },
+        { code: "PLN", name: "ZLOTY" },
+        { code: "TOP", name: "PA'ANGA" },
+        { code: "CLF", name: "FUNDS CODE UNIDADES DE FOMENTO" },
+        { code: "MKD", name: "DENAR" },
+        { code: "SCR", name: "SEYCHELLES RUPEE" },
+        { code: "CLP", name: "CHILEAN PESO" },
+        { code: "COP", name: "COLOMBIAN PESO" },
+        { code: "VEF", name: "BOLIVAR" },
+        { code: "UGX", name: "UGANDA SHILLING" },
+        { code: "MMK", name: "KYAT" },
+        { code: "NIO", name: "CORDOBA ORO" },
+        { code: "TMT", name: "TURKMENISTAN NEW MANAT" },
+        { code: "HRK", name: "KUNA" },
+        { code: "CZK", name: "CZECH KORUNA" },
+        { code: "SLL", name: "LEONE" },
+        { code: "LRD", name: "LIBERIAN DOLLAR" },
+        { code: "TTD", name: "TRINIDAD AND TOBAGO DOLLAR" },
+        { code: "MVR", name: "RUFIYAA" },
+        { code: "WST", name: "TALA" },
+        { code: "XDR", name: "SDR INT'L MONETARY FUND (I.M.F.)" },
+        { code: "RWF", name: "RWANDA FRANC" },
+        { code: "PKR", name: "PAKISTAN RUPEE" },
+        { code: "MUR", name: "MAURITIUS RUPEE" },
+        { code: "EUR", name: "" },
+        { code: "BHD", name: "BAHRAINI DINAR" },
+        { code: "MAD", name: "MOROCCAN DIRHAM" },
+        { code: "SVC", name: "EL SALVADOR COLON" },
+        { code: "MZN", name: "MOZAMBIQUE METICAL" },
+        { code: "NZD", name: "NEW ZEALAND DOLLAR" },
+        { code: "JOD", name: "JORDANIAN DINAR" },
+        { code: "AFN", name: "AFGHANI" },
+        { code: "BOV", name: "FUNDS CODE MVDOL" },
+        { code: "KGS", name: "SOM" },
+        { code: "NZD", name: "NZD" },
+        { code: "XBA", name: "EUROPEAN COMPOSITE UNIT (EURCO)" },
+        { code: "AOA", name: "KWANZA" },
+        { code: "BBD", name: "BARBADOS DOLLAR" },
+        { code: "TZS", name: "TANZANIAN SHILLING" },
+        { code: "AED", name: "UAE DIRHAM" },
+        { code: "HKD", name: "HONG KONG DOLLAR" },
+        { code: "SAR", name: "SAUDI RIYAL" },
+        { code: "TND", name: "TUNISIAN DINAR" },
+        { code: "BWP", name: "PULA" },
+        { code: "CUC", name: "PESO CONVERTIBLE" },
+        { code: "TJS", name: "SOMONI" },
+        { code: "INR", name: "INDIAN RUPEE" },
+        { code: "XPF", name: "CFP FRANC" },
+        { code: "GMD", name: "DALASI" },
+        { code: "XEU", name: "EUROPEAN CURRENCY UNIT (E.C.U.)" },
+        { code: "KPW", name: "NORTH KOREAN WON" },
+        { code: "ETB", name: "ETHIOPIAN BIRR" },
+        { code: "MWK", name: "KWACHA" },
+        { code: "SDG", name: "SUDANESE POUND" },
+        { code: "EGP", name: "EGYPTIAN POUND" },
+        { code: "PGK", name: "KINA" },
+        { code: "UAH", name: "HRYVNIA" },
+        { code: "RON", name: "ROMANIAN LEU" },
+        { code: "ALL", name: "LEK" },
+        { code: "SSP", name: "SOUTH SUDANESE POUND" },
+        { code: "MOP", name: "PATACA" },
+        { code: "MNT", name: "TUGRIK" },
+        { code: "YER", name: "YEMENI RIAL" },
+        { code: "MRO", name: "OUGUIYA" },
+        { code: "BZD", name: "BELIZE DOLLAR" },
+        { code: "XAG", name: "SILVER" },
+        { code: "KES", name: "KENYAN SHILLING" },
+        { code: "MDL", name: "MOLDOVAN LEU" },
+        { code: "ANG", name: "NETHERLANDS ANTILLIAN GUILDER" },
+        { code: "XAU", name: "GOLD" },
+        { code: "IQD", name: "IRAQI DINAR" },
+        { code: "CNY", name: "YUAN RENMINBI" },
+        { code: "BRL", name: "BRAZILIAN REAL" },
+        { code: "AZN", name: "AZERBAIJANIAN MANAT" },
+        { code: "LSL", name: "LOTI" },
+        { code: "CHF", name: "SWISS FRANC" },
+        { code: "ZWL", name: "ZIMBABWE DOLLAR" },
+        { code: "KMF", name: "COMORO FRANC" },
+        { code: "UYU", name: "PESO URUGUAYO" },
+        { code: "THB", name: "BAHT" },
+        { code: "FKP", name: "FALKLAND ISLANDS POUND" },
+        { code: "DJF", name: "DJIBOUTI FRANC" },
+        { code: "RUB", name: "RUSSIAN RUBLE" },
+        { code: "DZD", name: "ALGERIAN DINAR" },
+        { code: "BSD", name: "BAHAMIAN DOLLAR" },
+        { code: "CUP", name: "CUBAN PESO" },
+        { code: "VUV", name: "VATU" },
+        { code: "HNL", name: "LEMPIRA" },
+        { code: "QAR", name: "QATARI RIAL" },
+        { code: "GNF", name: "GUINEA FRANC" },
+        { code: "NGN", name: "NAIRA" },
+        { code: "CVE", name: "CAPE VERDE ESCUDO" },
+        { code: "USN", name: "US DOLLAR, NEXT DAY FUNDS" },
+        { code: "IDR", name: "RUPIAH" },
+        { code: "HTG", name: "GOURDE" },
+        { code: "JPY", name: "YEN" },
+        { code: "GYD", name: "GUYANA DOLLAR" },
+        { code: "STD", name: "DOBRA" },
+        { code: "BND", name: "BRUNEI DOLLAR" },
+        { code: "KYD", name: "CAYMAN ISLANDS DOLLAR" },
+        { code: "BIF", name: "BURUNDI FRANC" },
+        { code: "TRY", name: "TURKISH LIRA" },
+        { code: "HUF", name: "FORINT" },
+        { code: "LBP", name: "LEBANESE POUND" },
+        { code: "UYI", name: "URUGUAY PESO EN UNDIDADES INDEXADAS" },
+        { code: "SZL", name: "LILANGENI" },
+        { code: "DOP", name: "DOMINICAN PESO" },
+        { code: "ISK", name: "ICELAND KRONA" },
+        { code: "LTL", name: "LITHUANIAN LITAS" },
+        { code: "KZT", name: "TENGE" },
+        { code: "CAD", name: "CANADIAN DOLLAR" },
+        { code: "PEN", name: "NUEVO SOL" },
+        { code: "BMD", name: "BERMUDIAN DOLLAR" },
+        { code: "GIP", name: "GIBRALTAR POUND" },
+        { code: "SYP", name: "SYRIAN POUND" },
+        { code: "BOB", name: "BOLIVIANO" },
+        { code: "SHP", name: "ST. HELENA POUND" },
+        { code: "ERN", name: "NAKFA" },
+        { code: "XPT", name: "PLATINUM" },
+        { code: "XPD", name: "PALLADIUM" },
+        { code: "EUR", name: "EURO" }
+      ];
+      const currencyInput = user_currencyInput;
+      const suggestionsList = user_suggestionsList;
+
+      currencyInput.addEventListener("input", () => {
+        const inputText = currencyInput.value.toUpperCase();
+        const suggestions = currencyCodes.filter((currency) => currency.code.startsWith(inputText));
+        displaySuggestions(suggestions);
+      });
+
+      function displaySuggestions(suggestions) {
+        suggestionsList.innerHTML = "";
+
+        if (suggestions.length === 0) {
+          suggestionsList.style.display = "none";
+          return;
+        }
+
+        suggestionsList.style.display = "block";
+
+        suggestions.forEach((currency) => {
+          const listItem = document.createElement("li");
+          listItem.textContent = `${currency.code} - ${currency.name}`;
+          listItem.addEventListener("click", () => {
+            currencyInput.value = currency.code;
+            suggestionsList.style.display = "none";
+          });
+          suggestionsList.appendChild(listItem);
+        });
+      }
+
+      document.addEventListener("click", (e) => {
+        if (!suggestionsList.contains(e.target) && e.target !== currencyInput) {
+          suggestionsList.style.display = "none";
+        }
+      });
+    }
+  </script>
+
+  <script>
+    document.getElementById('saveButton').addEventListener('click', function () {
+
+      var orderingCustomerType = document.getElementById("orderingCustomerType").value;
+      var selectedinstitutionType = document.getElementById("institutionType").value;
+      var selectedSendersCorrespondentType = document.getElementById("SendersCorrespondentType").value;
+      var selectedReceiversCorrespondentType = document.getElementById("ReceiversCorrespondentType").value;
+      var selectedThirdReimbursementInstitutionType = document.getElementById("ThirdReimbursementInstitutionType").value;
+      var selectedIntermediaryInstitutionType = document.getElementById("IntermediaryInstitutionType").value;
+      var selectedAccountWithInstitutionType = document.getElementById("AccountWithInstitutionType").value;
+      var selectedBeneficiaryCustomerType = document.getElementById("BeneficiaryCustomerType").value;
+
+      let blobContent = "";
+
+
+      var Hdr_sender = document.getElementById("Header_sender").value;
+      var Hdr_incoming_or_outgoing = document.getElementById("Header_incoming_or_outgoing").value;
+      var Hdr_message = document.getElementById("Header_message").value;
+      var Hdr_receiver = document.getElementById("Header_receiver").value;
+      var Hdr_transaction_reference = document.getElementById("Header_transaction_reference").value;
+
+      blobContent += "{1:F01" + Hdr_sender + "0000000000}{2:" + Hdr_incoming_or_outgoing + Hdr_message + Hdr_receiver + "N}{3:{108:xxxxx}{121:" + Hdr_transaction_reference + "}}{4:" + "\r\n";
+      
+      var F20 = document.getElementById("referenceInput").value;
+      if (F20) {
+        blobContent += ":20:" + F20 + "\r\n";
+      }
+
+      var F13C_Code_Dropdown = document.getElementById("F13C_Code_Dropdown").value;
+      var F13C_timeIndication = document.getElementById("timeIndication13c").value;
+      var F13C_sign_Dropdown = document.getElementById("F13C_sign_Dropdown").value;
+      var F13C_offset = document.getElementById("offset13c").value;
+      if (F13C_Code_Dropdown && F13C_timeIndication && F13C_sign_Dropdown && F13C_offset) {
+        blobContent += ":13C:/" + F13C_Code_Dropdown + "/" + F13C_timeIndication + F13C_sign_Dropdown + F13C_offset + "\r\n";
+      }
+
+      var F23B = document.getElementById("F23BDropdown").value;
+      blobContent += ":23B:" + F23B + "\r\n";
+
+      var F23E_Code = document.getElementById("Code23EDropdown").value;
+      var F23E_AdditionalInfo = document.getElementById("AdditionalInfo23E").value;
+      if (F23E_Code || F23E_AdditionalInfo) {
+        if (F23E_Code) {
+          blobContent += ":23E:" + F23E_Code;
+        }
+        if (F23E_AdditionalInfo) {
+          blobContent += "/" + F23E_AdditionalInfo;
+        }
+        blobContent += "\r\n";
+      }
+
+      var F26T = document.getElementById("TransactionTypeCode26T").value;
+      if (F26T) {
+        blobContent += ":26T:" + F26T + "\r\n";
+      }
+
+      var F32A_ValueDate = new Date(document.getElementById("F32A_selectedDate").value);
+      var formattedDate;
+      if (!isNaN(F32A_ValueDate)) {
+        var year = F32A_ValueDate.getFullYear().toString().substr(-2);
+        var month = String(F32A_ValueDate.getMonth() + 1).padStart(2, '0');
+        var day = String(F32A_ValueDate.getDate()).padStart(2, '0');
+        formattedDate = year + month + day;
+      }
+      var F32A_Currencycode = document.getElementById("Currencycode32A").value;
+      var F32A_Amount = document.getElementById("Amount32A").value;
+      if (formattedDate && F32A_Currencycode && F32A_Amount) {
+        blobContent += ":32A:" + formattedDate + F32A_Currencycode + F32A_Amount + ",00\r\n";
+      }
+
+
+      var F33B_Currencycode = document.getElementById("Currencycode33B").value;
+      var F33B_Amount = document.getElementById("Amount33B").value;
+      if (F33B_Currencycode && F33B_Amount) {
+        blobContent += ":33B:" + F33B_Currencycode + F33B_Amount + ",00\r\n";
+      }
+
+      var F50a_account = document.getElementById('account50a').value;
+      var F50a_identifierCode = document.getElementById('identifierCode50a').value;
+      var F50a_partyIdentifier = document.getElementById('partyIdentifier50a').value;
+      var F50a_nameAndAddressF = document.getElementById('nameAndAddressF50a').value;
+      var F50a_nameAndAddress = document.getElementById('nameAndAddress50a').value;
+      if (orderingCustomerType === "Ordering Customer-OptionA") {
+        blobContent += ":50A: " + F50a_account + "\r\n";
+        blobContent += F50a_identifierCode + "\r\n";
+      } else if (orderingCustomerType === "Ordering Customer-OptionF") {
+        blobContent += ":50F: " + document.getElementById('partyIdentifier50a').value + "\r\n";
+        blobContent += F50a_nameAndAddressF + "\r\n";
+      } else if (orderingCustomerType === "Ordering Customer-OptionK") {
+        blobContent += ":50K: " + F50a_account + "\r\n";
+        blobContent += F50a_nameAndAddress + "\r\n";
+      }
+      var PartyIdentifier51A_1 = document.getElementById("PartyIdentifier51A_1").value;
+      var PartyIdentifier51A_2 = document.getElementById("PartyIdentifier51A_2").value;
+      if (PartyIdentifier51A_1 || PartyIdentifier51A_2) {
+        blobContent += ":51A:";
+        if (PartyIdentifier51A_1) {
+          blobContent += PartyIdentifier51A_1 + "\r\n";
+        }
+        if (PartyIdentifier51A_2) {
+          blobContent += PartyIdentifier51A_2 + "\r\n";
+        }
+      }
+
+      var F52a_partyIdentifier = document.getElementById("partyIdentifier52a").value;
+      var F52a_identifierCode = document.getElementById("identifierCode52a").value;
+      var F52a_partyIdentifierD = document.getElementById("partyIdentifier52aD").value;
+      var F52a_nameAndAddress = document.getElementById("nameAndAddress52a").value;
+
+      if (selectedinstitutionType === "Ordering Institution-OptionA") {
+        blobContent += ":52A:" + F52a_partyIdentifier + "\r\n";
+        blobContent += F52a_identifierCode + "\r\n";
+      } else if (selectedinstitutionType === "Ordering Institution-OptioD") {
+        blobContent += ":52D:" + F52a_partyIdentifierD + "\r\n";
+        blobContent += F52a_nameAndAddress + "\r\n";
+      }
+
+      var F53a_partyIdentifier = document.getElementById("partyIdentifier53a").value;
+      var F53a_identifierCode = document.getElementById("identifierCode53a").value;
+      var F53a_partyIdentifierB = document.getElementById("partyIdentifierB53a").value;
+      var F53a_location = document.getElementById("location53a").value;
+      var F53a_nameAndAddress = document.getElementById("nameAndAddress53a").value;
+
+      if (selectedSendersCorrespondentType === "Senders Correspondent-OptionA") {
+        blobContent += ":53A:" + F53a_partyIdentifier + "\r\n";
+        blobContent += F53a_identifierCode + "\r\n";
+      } else if (selectedSendersCorrespondentType === "Senders Correspondent-OptionB") {
+        blobContent += ":53B:" + F53a_partyIdentifierB + "\r\n";
+        blobContent += F53a_location + "\r\n";
+      } else if (selectedSendersCorrespondentType === "Senders Correspondent-OptionD") {
+        blobContent += ":53D:" + F53a_partyIdentifier + "\r\n";
+        blobContent += F53a_nameAndAddress + "\r\n";
+      }
+
+      var F54a_partyIdentifier = document.getElementById("partyIdentifier54a").value;
+      var F54a_identifierCode = document.getElementById("identifierCode54a").value;
+      var F54a_partyIdentifierB = document.getElementById("partyIdentifierB54a").value;
+      var F54a_location = document.getElementById("location54a").value;
+      var F54a_nameAndAddress = document.getElementById("nameAndAddress54a").value;
+
+      if (selectedReceiversCorrespondentType === "Receivers Correspondent-OptionA") {
+        blobContent += ":54A:" + F54a_partyIdentifier + "\r\n";
+        blobContent += F54a_identifierCode + "\r\n";
+      } else if (selectedReceiversCorrespondentType === "Receivers Correspondent-OptionB") {
+        blobContent += ":54B:" + F54a_partyIdentifierB + "\r\n";
+        blobContent += F54a_location + "\r\n";
+      } else if (selectedReceiversCorrespondentType === "Receivers Correspondent-OptionD") {
+        blobContent += ":54D:" + F54a_partyIdentifier + "\r\n";
+        blobContent += F54a_nameAndAddress + "\r\n";
+      }
+
+      var F55a_partyIdentifier = document.getElementById("partyIdentifier55a").value;
+      var F55a_identifierCode = document.getElementById("identifierCode55a").value;
+      var F55a_partyIdentifierB = document.getElementById("partyIdentifierB55a").value;
+      var F55a_location = document.getElementById("location55a").value;
+      var F55a_nameAndAddress = document.getElementById("nameAndAddress55a").value;
+
+      if (selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionA") {
+        blobContent += ":55A:" + F55a_partyIdentifier + "\r\n";
+        blobContent += F55a_identifierCode + "\r\n";
+      } else if (selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionB") {
+        blobContent += ":55B:" + F55a_partyIdentifierB + "\r\n";
+        blobContent += F55a_location + "\r\n";
+      } else if (selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionD") {
+        blobContent += ":55D:" + F55a_partyIdentifier + "\r\n";
+        blobContent += F55a_nameAndAddress + "\r\n";
+      }
+
+      var F56a_partyIdentifier = document.getElementById("partyIdentifier56a").value;
+      var F56a_identifierCode = document.getElementById("identifierCode56a").value;
+      var F56a_partyIdentifierC = document.getElementById("partyIdentifierC56a").value;
+      var F56a_nameAndAddress = document.getElementById("nameAndAddress56a").value;
+
+      if (selectedIntermediaryInstitutionType === "Intermediary Institution-OptionA") {
+        blobContent += ":56A:" + F56a_partyIdentifier + "\r\n";
+        blobContent += F56a_identifierCode + "\r\n";
+      } else if (selectedIntermediaryInstitutionType === "Intermediary Institution-OptionC") {
+        blobContent += ":56C:" + F56a_partyIdentifierC + "\r\n";
+      } else if (selectedIntermediaryInstitutionType === "Intermediary Institution-OptionD") {
+        blobContent += ":56D:" + F56a_partyIdentifier + "\r\n";
+        blobContent += F56a_nameAndAddress + "\r\n";
+      }
+
+      var F57a_partyIdentifier = document.getElementById("partyIdentifier57a").value;
+      var F57a_identifierCode = document.getElementById("identifierCode57a").value;
+      var F57a_partyIdentifierB = document.getElementById("partyIdentifierB57a").value;
+      var F57a_location = document.getElementById("location57a").value;
+      var F57a_nameAndAddress = document.getElementById("nameAndAddress57a").value;
+
+      if (selectedAccountWithInstitutionType === "Account With Institution-OptionA") {
+        blobContent += ":57A:" + F57a_partyIdentifier + "\r\n";
+        blobContent += F57a_identifierCode + "\r\n";
+      } else if (selectedAccountWithInstitutionType === "Account With Institution-OptionB") {
+        blobContent += ":57B:" + F57a_partyIdentifierB + "\r\n";
+        blobContent += F57a_location + "\r\n";
+      } else if (selectedAccountWithInstitutionType === "Account With Institution-OptionC") {
+        blobContent += ":57C:" + F57a_partyIdentifier + "\r\n";
+      } else if (selectedAccountWithInstitutionType === "Account With Institution-OptionD") {
+        blobContent += ":57D:" + F57a_partyIdentifier + "\r\n";
+        blobContent += F57a_nameAndAddress + "\r\n";
+      }
+
+
+      var F59a_account = document.getElementById("account59a").value;
+      var F59a_nameAndAddress = document.getElementById("nameAndAddress59a").value;
+      var F59a_identifierCode = document.getElementById("identifierCode59a").value;
+      var F59a_nameAndAddressF = document.getElementById("nameAndAddressF59a").value;
+
+      if (selectedBeneficiaryCustomerType === "Beneficiary Customer-NoLetterOption") {
+        blobContent += ":59:" + F59a_account + "\r\n";
+        blobContent += F59a_nameAndAddress + "\r\n";
+      } else if (selectedBeneficiaryCustomerType === "Beneficiary Customer-OptionA") {
+        blobContent += ":59A:" + F59a_account + "\r\n";
+        blobContent += F59a_identifierCode + "\r\n";
+      } else if (selectedBeneficiaryCustomerType === "Beneficiary Customer-OptionF") {
+        blobContent += ":59F:" + F59a_account + "\r\n";
+        blobContent += F59a_nameAndAddressF + "\r\n";
+      }
+
+      var F70 = document.getElementById("Narrative70").value;
+      if (F70) {
+        blobContent += ":70:" + F70 + "\r\n";
+      }
+
+      var F71A = document.getElementById("chargesInfo71A").value;
+      if (F71A) {
+        blobContent += ":71A:" + F71A + "\r\n";
+      }
+
+      var F71F_Currencycode = document.getElementById("Currencycode71F").value;
+      var F71F_Amount = document.getElementById("Amount71F").value;
+      if (F71F_Currencycode && F71F_Amount) {
+        blobContent += ":71F:" + F71F_Currencycode + F71F_Amount + ",00\r\n";
+      }
+
+      var F71G_Currencycode = document.getElementById("Currencycode71G").value;
+      var F71G_Amount = document.getElementById("Amount71G").value;
+      if (F71G_Currencycode && F71G_Amount) {
+        blobContent += ":71F:" + F71G_Currencycode + F71G_Amount + ",00\r\n";
+      }
+
+      var F72 = document.getElementById("SendertoReceiverInfo72").value;
+      if (F72) {
+        blobContent += ":72:" + F72 + "\r\n";
+      }
+
+      var F77B = document.getElementById("RegulatoryReporting77B").value;
+      if (F77B) {
+        blobContent += ":77B:" + F77B + "\r\n";
+      }
+
+      blobContent += "-}";
+      const blob = new Blob([blobContent], { type: 'text/plain' });
+
+      if (Hdr_sender && Hdr_incoming_or_outgoing && Hdr_message && Hdr_receiver && F20 && F23B && formattedDate && F32A_Currencycode && F32A_Amount &&
+        (
+          ((orderingCustomerType && orderingCustomerType === "Ordering Customer-OptionA") && F50a_account && F50a_identifierCode) ||
+          ((orderingCustomerType && orderingCustomerType === "Ordering Customer-OptionF") && F50a_partyIdentifier && F50a_nameAndAddressF) ||
+          ((orderingCustomerType && orderingCustomerType === "Ordering Customer-OptionK") && F50a_account && F50a_nameAndAddress)
+        )
+        &&
+        (
+          ((selectedBeneficiaryCustomerType && selectedBeneficiaryCustomerType === "Beneficiary Customer-NoLetterOption") && F59a_account && F59a_nameAndAddress) ||
+          ((selectedBeneficiaryCustomerType && selectedBeneficiaryCustomerType === "Beneficiary Customer-OptionA") && F59a_account && F59a_identifierCode) ||
+          ((selectedBeneficiaryCustomerType && selectedBeneficiaryCustomerType === "Beneficiary Customer-OptionF") && F59a_account && F59a_nameAndAddressF)
+        )
+        && F71A
+      ) {
+        if (
+          ((selectedinstitutionType === "Ordering Institution-OptionA" && F52a_partyIdentifier && F52a_identifierCode) ||
+            (selectedinstitutionType === "Ordering Institution-OptionD" && F52a_partyIdentifierD && F52a_nameAndAddress) || selectedinstitutionType == "")
+        ) {
+
+          if (((selectedSendersCorrespondentType === "Senders Correspondent-OptionA" && F53a_partyIdentifier && F53a_identifierCode) ||
+            (selectedSendersCorrespondentType === "Senders Correspondent-OptionB" && F53a_partyIdentifierB && F53a_location) ||
+            (selectedSendersCorrespondentType === "Senders Correspondent-OptionD" && F53a_partyIdentifier && F53a_nameAndAddress) || selectedSendersCorrespondentType == "")) {
+
+            if (((selectedReceiversCorrespondentType === "Receivers Correspondent-OptionA" && F54a_partyIdentifier && F54a_identifierCode) ||
+              (selectedReceiversCorrespondentType === "Receivers Correspondent-OptionB" && F54a_partyIdentifierB && F54a_location) ||
+              (selectedReceiversCorrespondentType === "Receivers Correspondent-OptionD" && F54a_partyIdentifier && F54a_nameAndAddress) || selectedReceiversCorrespondentType == "")) {
+
+              if (((selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionA" && F55a_partyIdentifier && F55a_identifierCode) ||
+                (selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionB" && F55a_partyIdentifierB && F55a_location) ||
+                (selectedThirdReimbursementInstitutionType === "Third Reimbursement Institution-OptionD" && F55a_partyIdentifier && F55a_nameAndAddress) || selectedThirdReimbursementInstitutionType == "")) {
+
+                if (((selectedIntermediaryInstitutionType === "Intermediary Institution-OptionA" && F56a_partyIdentifier && F56a_identifierCode) ||
+                  (selectedIntermediaryInstitutionType === "Intermediary Institution-OptionC" && F56a_partyIdentifierC) ||
+                  (selectedIntermediaryInstitutionType === "Intermediary Institution-OptionD" && F56a_partyIdentifier && F56a_nameAndAddress) || selectedIntermediaryInstitutionType == "")) {
+
+                  if ((selectedAccountWithInstitutionType === "Account With Institution-OptionA" && F57a_partyIdentifier && F57a_identifierCode) ||
+                    (selectedAccountWithInstitutionType === "Account With Institution-OptionB" && F57a_partyIdentifierB && F57a_location) ||
+                    (selectedAccountWithInstitutionType === "Account With Institution-OptionC" && F57a_partyIdentifier) ||
+                    (selectedAccountWithInstitutionType === "Account With Institution-OptionD" && F57a_partyIdentifier && F57a_nameAndAddress) || selectedAccountWithInstitutionType == "") {
+
+
+                    // Create an invisible anchor element
+                    const anchor = document.createElement('a');
+                    document.body.appendChild(anchor); // Append the anchor to the document body
+
+                    // Set the anchor's properties for the direct download
+                    var uniqueFilename = generateUniqueFilename();
+                    anchor.href = URL.createObjectURL(blob);
+                    anchor.download = uniqueFilename;
+                    anchor.style.display = 'none';
+
+                    // Trigger a click event on the anchor to initiate the download
+                    anchor.click();
+
+                    // Clean up: Remove the anchor from the DOM
+                    document.body.removeChild(anchor);
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    });
+    // Function to generate a unique filename with the current date and time down to the microsecond
+    function generateUniqueFilename() {
+      const now = new Date();
+      const microsecond = String(now.getMilliseconds()).padStart(3, '0');
+      const timestamp = `${now.getFullYear()}${(now.getMonth() + 1).toString().padStart(2, '0')}${now.getDate().toString().padStart(2, '0')}${now.getHours().toString().padStart(2, '0')}${now.getMinutes().toString().padStart(2, '0')}${now.getSeconds().toString().padStart(2, '0')}${microsecond}`;
+      return `MT103_${timestamp}.txt`; // You can change 'file_' to your desired prefix and '.txt' to the desired file extension
+    }
+  </script>
+  </form>
+</body>
+
+</html>

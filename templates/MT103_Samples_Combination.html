@@ -1,0 +1,577 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>MT103_Samples_Combination</title>
+    <style>
+        body {
+            display: block;
+            align-items: center;
+            justify-content: center;
+            max-width: 70%;
+        }
+
+        form {
+            display: grid;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            margin-left: 35%;
+            max-width: 70%;
+            border: 3.5px solid red;
+            -webkit-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+            box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+        }
+
+        fieldset {
+            margin: 5px;
+            border: 1px solid black;
+        }
+
+        button {
+            margin: 10px;
+            border: 2px solid black;
+            padding: 5px;
+            transition: transform .2s;
+            border-radius: 7.5px;
+            font-size: 2rem;
+        }
+
+        button:hover {
+            transform: scale(1.05)
+        }
+
+        .tab {
+            border: 1px solid #ddd;
+            margin-top: 1em;
+            width: 500px;
+        }
+
+        .tab h1 {
+            font-size: 14px;
+            text-align: left;
+
+        }
+
+        .tab h1 span {
+            display: inline;
+            border: 1px solid #fff;
+            background: #fff;
+            padding: 5px 5px;
+            margin-left: 2px;
+            position: relative;
+            top: -1.1em;
+        }
+
+        .tab p input {
+            padding: 2px;
+            width: 25%;
+            border: 1px solid black;
+            margin-left: 5px;
+        }
+
+        select {
+            padding: 2px;
+            width: 35%;
+            border-radius: 10px;
+            border: 1px solid black;
+        }
+
+        input {
+            padding: 2px;
+            margin: 3px;
+        }
+
+        .required {
+            padding: 2px;
+        }
+
+        .heading {
+            font-family: Arial, sans-serif;
+            font-size: 24px;
+            color: #333;
+            background-color: #f0f0f0;
+            padding: 10px;
+            border-radius: 1px;
+            text-align: center;
+            margin-left: 35%;
+            -webkit-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+            -moz-box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+            box-shadow: -2px -1px 30px 7px rgba(0, 0, 0, 0.75);
+
+        }
+
+        ul {
+            transform: translateX(55%);
+            max-width: max-content;
+            display: flex;
+        }
+
+        ul.navbar {
+            list-style-type: none;
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            background-color: #f0f0f0;
+            border: 3px solid black;
+            border-radius: 10px;
+        }
+
+        li.nav-item {
+            float: left;
+            margin-right: 20px;
+            margin-left: 1%;
+
+        }
+
+        li.nav-item a {
+            display: block;
+            color: #333;
+            padding: 10px 15px;
+            text-decoration: none;
+        }
+
+        li.nav-item a:hover {
+            background-color: #0077b6;
+            max-width: max-content;
+            color: #ffffff;
+        }
+    </style>
+</head>
+
+<body>
+    <ul class="navbar">
+        <li class="nav-item"><a href="/MT103_Samples_Combination">MT103_Samples_Combination</a></li>
+        <li class="nav-item"><a href="/CustomSingleSampleGenerator">CustomSingleSampleGenerator</a></li>
+        <li class="nav-item"><a href="/SampleMaintainer">SampleMaintainer</a></li>
+    </ul>
+    <h1 class="heading">MT103_Samples_Combination</h1>
+    <form id="myForm">
+        <h1>MT103 Header</h1>
+        <div class="tab">
+            <h1><span class="aestrik">Sender(Block1)*</span></h1>
+            <p><input class="required" id="Header_sender" placeholder="e.g., F01{Sender}0000000000" value="BARCGB22XXXX"
+                    maxlength="16"></p>
+        </div>
+        <div class="tab">
+            <h1><span class="aestrik">Incoming or Outgoing WRT SWIFT Network(Block 2)*</span></h1>
+            <p><select id="Header_incoming_or_outgoing">
+                    <option value="I">I</option>
+                    <option value="O">O</option>
+                </select></p>
+            <p>
+        </div>
+
+        <div class="tab">
+            <h1><span class="aestrik">Message Type(Block 2)*</span></h1>
+            <p><input class="required" id="Header_message" placeholder="e.g., 103" value="103"></p>
+        </div>
+
+        <div class="tab">
+            <h1><span class="aestrik">Receiver(Block 2)*</span></h1>
+            <p><input class="required" id="Header_receiver" placeholder="e.g., ABNANL2A" value="RBSIGB2LXXXX"></p>
+        </div>
+
+        <div class="tab">
+            <h1><span class="aestrik">Transaction Reference(Block 3 tag 121)</span></h1>
+            <p><input id="Header_transaction_reference" placeholder="e.g., 3:{transaction_reference}, default value'"
+                    value="174c245f-2682-4291-ad67-2a41e530cd27"></p>
+        </div>
+        <fieldset>
+            <legend>Sender's Reference(:20:)</legend>
+            <label><input type="radio" name="F20option" value="true" disabled checked /> True</label>
+            <label><input type="radio" name="F20option" value="false" disabled /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Time indication(:13C:):</legend>
+            <label><input type="radio" name="F13Coption" value="true" /> True</label>
+            <label><input type="radio" name="F13Coption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Bank Operation Code(:23B:):</legend>
+            <label><input type="radio" name="F23Boption" value="true" disabled checked /> True</label>
+            <label><input type="radio" name="F23Boption" value="false" disabled /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Instruction Code(:23E:):</legend>
+            <label><input type="radio" name="F23Eoption" value="true" /> True</label>
+            <label><input type="radio" name="F23Eoption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Transaction Type Code(:26T:):</legend>
+            <label><input type="radio" name="F26Toption" value="true" /> True</label>
+            <label><input type="radio" name="F26Toption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Value Date/Currency/Interbank Settled Amount(:32A:)*:</legend>
+            <label><input type="radio" name="F32Aoption" value="true" disabled checked /> True</label>
+            <label><input type="radio" name="F32Aoption" value="false" disabled /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Exchange Rate(:36:):</legend>
+            <label><input type="radio" name="F36option" value="true" /> True</label>
+            <label><input type="radio" name="F36option" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Currency/Instructed Amount(:33B:):</legend>
+            <label><input type="radio" name="F33Boption" value="true" /> True</label>
+            <label><input type="radio" name="F33Boption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Ordering Customer-Option (:50a:)*:</legend>
+            <label><input type="radio" name="F50aoption" value="true" disabled checked /> True</label>
+            <label><input type="radio" name="F50aoption" value="false" disabled /> False</label>
+            <label for="F50aOptionDropdown">Choose option:</label>
+            <select id="F50aOptionDropdown" name="dropdown">
+                <option value="50A">50A</option>
+                <option value="50F">50F</option>
+                <option value="50K">50K</option>
+            </select>
+        </fieldset>
+        <fieldset>
+            <legend>Sending Institution (:51A:):</legend>
+            <label><input type="radio" name="F51Aoption" value="true" /> True</label>
+            <label><input type="radio" name="F51Aoption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Ordering Institution-Option (:52a:):</legend>
+            <label><input type="radio" name="F52aoption" value="true" id="F52aTrue" /> True</label>
+            <label><input type="radio" name="F52aoption" value="false" id="F52aFalse" checked /> False</label>
+            <div id="F52aDropdownContainer" style="display: none;">
+                <label for="F52aOptionDropdown">Choose option:</label>
+                <select id="F52aOptionDropdown" name="dropdown">
+                    <option value="52A">52A</option>
+                    <option value="52D">52D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Sender's Correspondent Option (:53a:):</legend>
+            <label><input type="radio" name="F53aoption" value="true" id="F53aTrue" /> True</label>
+            <label><input type="radio" name="F53aoption" value="false" id="F53aFalse" checked /> False</label>
+            <div id="F53aDropdownContainer" style="display: none;">
+                <label for="F53aOptionDropdown">Choose option:</label>
+                <select id="F53aOptionDropdown" name="dropdown">
+                    <option value="53A">53A</option>
+                    <option value="53B">53B</option>
+                    <option value="53D">53D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Receiver's Correspondent Option (:54a:):</legend>
+            <label><input type="radio" name="F54aoption" value="true" id="F54aTrue" /> True</label>
+            <label><input type="radio" name="F54aoption" value="false" id="F54aFalse" checked /> False</label>
+            <div id="F54aDropdownContainer" style="display: none;">
+                <label for="F54aOptionDropdown">Choose option:</label>
+                <select id="F54aOptionDropdown" name="dropdown">
+                    <option value="54A">54A</option>
+                    <option value="54B">54B</option>
+                    <option value="54D">54D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Third Reimbursement Institution Option (:55a:):</legend>
+            <label><input type="radio" name="F55aoption" value="true" id="F55aTrue" /> True</label>
+            <label><input type="radio" name="F55aoption" value="false" id="F55aFalse" checked /> False</label>
+            <div id="F55aDropdownContainer" style="display: none;">
+                <label for="F55aOptionDropdown">Choose option:</label>
+                <select id="F55aOptionDropdown" name="dropdown">
+                    <option value="55A">55A</option>
+                    <option value="55B">55B</option>
+                    <option value="55D">55D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Intermediary Institution Option (:56a:):</legend>
+            <label><input type="radio" name="F56aoption" value="true" id="F56aTrue" /> True</label>
+            <label><input type="radio" name="F56aoption" value="false" id="F56aFalse" checked /> False</label>
+            <div id="F56aDropdownContainer" style="display: none;">
+                <label for="F56aOptionDropdown">Choose option:</label>
+                <select id="F56aOptionDropdown" name="dropdown">
+                    <option value="56A">56A</option>
+                    <option value="56B">56B</option>
+                    <option value="56D">56D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Account With Institution Option (:57a:):</legend>
+            <label><input type="radio" name="F57aoption" value="true" id="F57aTrue" /> True</label>
+            <label><input type="radio" name="F57aoption" value="false" id="F57aFalse" checked /> False</label>
+            <div id="F57aDropdownContainer" style="display: none;">
+                <label for="F57aOptionDropdown">Choose option:</label>
+                <select id="F57aOptionDropdown" name="dropdown">
+                    <option value="57A">57A</option>
+                    <option value="57B">57B</option>
+                    <option value="57C">57C</option>
+                    <option value="57D">57D</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Beneficiary Customer Option (:59a:)*:</legend>
+            <label><input type="radio" name="F59aoption" value="true" id="F59aTrue" checked disabled /> True</label>
+            <label><input type="radio" name="F59aoption" value="false" id="F59aFalse" disabled /> False</label>
+            <div id="F59aDropdownContainer">
+                <label for="F59aOptionDropdown">Choose option:</label>
+                <select id="F59aOptionDropdown" name="dropdown">
+                    <option value="59">59</option>
+                    <option value="59A">59A</option>
+                    <option value="59F">59F</option>
+                </select>
+            </div>
+        </fieldset>
+        <fieldset>
+            <legend>Remittance Information (:70:):</legend>
+            <label><input type="radio" name="F70option" value="true" /> True</label>
+            <label><input type="radio" name="F70option" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Details of Charges (:71A:)*:</legend>
+            <label><input type="radio" name="F71Aoption" value="true" disabled checked /> True</label>
+            <label><input type="radio" name="F71Aoption" value="false" disabled /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Sender's Charges (:71F:)</legend>
+            <label><input type="radio" name="F71Foption" value="true" /> True</label>
+            <label><input type="radio" name="F71Foption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Receiver's Charges (:71G:):</legend>
+            <label><input type="radio" name="F71Goption" value="true" /> True</label>
+            <label><input type="radio" name="F71Goption" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Sender to Receiver Information (:72:):</legend>
+            <label><input type="radio" name="F72option" value="true" /> True</label>
+            <label><input type="radio" name="F72option" value="false" checked /> False</label>
+        </fieldset>
+        <fieldset>
+            <legend>Regulatory Reporting (:77B:):</legend>
+            <label><input type="radio" name="F77Boption" value="true" /> True</label>
+            <label><input type="radio" name="F77Boption" value="false" checked /> False</label>
+        </fieldset>
+        <button type="button" id="submitBtn">Submit</button>
+    </form>
+    <a id="downloadLink" style="display: none" download="selected_values.txt">Download Selected Values</a>
+
+    <script>
+        // Function to toggle the visibility of the dropdown
+        function toggleDropdownVisibility(radioId, dropdownContainerId) {
+            var dropdownContainer = document.getElementById(dropdownContainerId);
+            var trueRadio = document.getElementById(radioId);
+
+            if (trueRadio.checked) {
+                dropdownContainer.style.display = "block";  // Show the dropdown and its label
+            } else {
+                dropdownContainer.style.display = "none";   // Hide the dropdown and its label
+            }
+        }
+        // Add event listeners for multiple radio and dropdown pairs
+        document.getElementById("F52aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F52aTrue", "F52aDropdownContainer");
+        });
+        document.getElementById("F52aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F52aTrue", "F52aDropdownContainer");
+        });
+
+        document.getElementById("F53aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F53aTrue", "F53aDropdownContainer");
+        });
+        document.getElementById("F53aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F53aTrue", "F53aDropdownContainer");
+        });
+
+        document.getElementById("F54aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F54aTrue", "F54aDropdownContainer");
+        });
+        document.getElementById("F54aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F54aTrue", "F54aDropdownContainer");
+        });
+
+        document.getElementById("F55aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F55aTrue", "F55aDropdownContainer");
+        });
+        document.getElementById("F55aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F55aTrue", "F55aDropdownContainer");
+        });
+
+        document.getElementById("F56aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F56aTrue", "F56aDropdownContainer");
+        });
+        document.getElementById("F56aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F56aTrue", "F56aDropdownContainer");
+        });
+
+        document.getElementById("F57aTrue").addEventListener("change", function () {
+            toggleDropdownVisibility("F57aTrue", "F57aDropdownContainer");
+        });
+        document.getElementById("F57aFalse").addEventListener("change", function () {
+            toggleDropdownVisibility("F57aTrue", "F57aDropdownContainer");
+        });
+        // Initial calls to set visibility based on the initial state
+        toggleDropdownVisibility("F52aTrue", "F52aDropdownContainer");
+        toggleDropdownVisibility("F53aTrue", "F53aDropdownContainer");
+        toggleDropdownVisibility("F54aTrue", "F52aDropdownContainer");
+        toggleDropdownVisibility("F55aTrue", "F53aDropdownContainer");
+        toggleDropdownVisibility("F56aTrue", "F52aDropdownContainer");
+        toggleDropdownVisibility("F57aTrue", "F53aDropdownContainer");
+    </script>
+    <script>
+        document.getElementById("submitBtn").addEventListener("click", function () {
+            let Hdr_blobContent = "";
+
+
+            var Hdr_sender = document.getElementById("Header_sender").value;
+            var Hdr_incoming_or_outgoing = document.getElementById("Header_incoming_or_outgoing").value;
+            var Hdr_message = document.getElementById("Header_message").value;
+            var Hdr_receiver = document.getElementById("Header_receiver").value;
+            var Hdr_transaction_reference = document.getElementById("Header_transaction_reference").value;
+
+            Hdr_blobContent += "{1:F01" + Hdr_sender + "0000000000}{2:" + Hdr_incoming_or_outgoing + Hdr_message + Hdr_receiver + "N}";
+            if (Hdr_transaction_reference) {
+                Hdr_blobContent += "{3:{108:xxxxx}{121:" + Hdr_transaction_reference + "}}";
+            }
+            
+            Hdr_blobContent += "{4:" + "\r\n";
+            var selectedValues = [];
+
+            var MF20 = document.querySelector('input[name="F20option"]').checked;
+            var OF13 = document.querySelector('input[name="F13Coption"]').checked;
+            var MF23B = document.querySelector('input[name="F23Boption"]').checked;
+            var OF23E = document.querySelector('input[name="F23Eoption"]').checked;
+            var OF26T = document.querySelector('input[name="F26Toption"]').checked;
+            var MF32A = document.querySelector('input[name="F32Aoption"]').checked;
+            var OF33B = document.querySelector('input[name="F33Boption"]').checked;
+            var OF36 = document.querySelector('input[name="F36option"]').checked;
+            var MF50a = document.querySelector('input[name="F50aoption"]').checked;
+            var MF50aOptionDropdown = document.getElementById('F50aOptionDropdown').value;
+            var OF51A = document.querySelector('input[name="F51Aoption"]').checked;
+            var OF52a = document.querySelector('input[name="F52aoption"]').checked;
+            var OF52aOptionDropdown = document.getElementById('F52aOptionDropdown').value;
+            var OF53a = document.querySelector('input[name="F53aoption"]').checked;
+            var OF53aOptionDropdown = document.getElementById('F53aOptionDropdown').value;
+            var OF54a = document.querySelector('input[name="F54aoption"]').checked;
+            var OF54aOptionDropdown = document.getElementById('F54aOptionDropdown').value;
+            var OF55a = document.querySelector('input[name="F55aoption"]').checked;
+            var OF55aOptionDropdown = document.getElementById('F55aOptionDropdown').value;
+            var OF56a = document.querySelector('input[name="F56aoption"]').checked;
+            var OF56aOptionDropdown = document.getElementById('F56aOptionDropdown').value;
+            var OF57a = document.querySelector('input[name="F57aoption"]').checked;
+            var OF57aOptionDropdown = document.getElementById('F57aOptionDropdown').value;
+            var MF59a = document.querySelector('input[name="F59aoption"]').checked;
+            var MF59aOptionDropdown = document.getElementById('F59aOptionDropdown').value;
+            var OF70 = document.querySelector('input[name="F70option"]').checked;
+            var MF71A = document.querySelector('input[name="F71Aoption"]').checked;
+            var OF71F = document.querySelector('input[name="F71Foption"]').checked;
+            var OF71G = document.querySelector('input[name="F71Goption"]').checked;
+            var OF72 = document.querySelector('input[name="F72option"]').checked;
+            var OF77B = document.querySelector('input[name="F77Boption"]').checked;
+
+            if (MF20) {
+                selectedValues.push("('M', '20')");
+            }
+            if (OF13) {
+                selectedValues.push("('O', '13C')");
+            }
+            if (MF23B) {
+                selectedValues.push("('M', '23B')");
+            }
+            if (OF23E) {
+                selectedValues.push("('O', '23E')");
+            }
+            if (OF26T) {
+                selectedValues.push("('O', '26T')");
+            }
+            if (MF32A) {
+                selectedValues.push("('M', '32A')");
+            }
+            if (OF33B) {
+                selectedValues.push("('O', '33B')");
+            }
+            if (OF36) {
+                selectedValues.push("('O', '36')");
+            }
+            if (MF50a) {
+                selectedValues.push("('M', '" + MF50aOptionDropdown + "')");
+            }
+            if (OF51A) {
+                selectedValues.push("('O', '51A')");
+            }
+            if (OF52a) {
+                selectedValues.push("('O', '" + OF52aOptionDropdown + "')");
+            }
+            if (OF53a) {
+                selectedValues.push("('O', '" + OF53aOptionDropdown + "')");
+            }
+            if (OF54a) {
+                selectedValues.push("('O', '" + OF54aOptionDropdown + "')");
+            }
+            if (OF55a) {
+                selectedValues.push("('O', '" + OF55aOptionDropdown + "')");
+            }
+            if (OF56a) {
+                selectedValues.push("('O', '" + OF56aOptionDropdown + "')");
+            }
+            if (OF57a) {
+                selectedValues.push("('O', '" + OF57aOptionDropdown + "')");
+            }
+            if (MF59a) {
+                selectedValues.push("('M', '" + MF59aOptionDropdown + "')");
+            }
+            if (OF70) {
+                selectedValues.push("('O', '70')");
+            }
+            if (MF71A) {
+                selectedValues.push("('M', '71A')");
+            }
+            if (OF71F) {
+                selectedValues.push("('O', '71F')");
+            }
+            if (OF71G) {
+                selectedValues.push("('O', '71G')");
+            }
+            if (OF72) {
+                selectedValues.push("('O', '72')");
+            }
+            if (OF77B) {
+                selectedValues.push("('O', '77B')");
+            }
+
+            // Create a Blob with the selected values
+            const blob1 = new Blob([Hdr_blobContent], { type: 'text/plain' });
+            const blob = new Blob([`[${selectedValues.join(', ')}]`], { type: "text/plain" });
+
+            // Create a FormData object to send the blobs and tag list
+            const formData = new FormData();
+            formData.append('hdr_blob', blob1, 'header.txt'); // 'excel.xlsx' is the desired filename
+            formData.append('tag_list_for_combinations_blob', blob, 'tag_list_for_combinations.txt'); // 'header.txt' is the desired filename
+
+            // Make an AJAX request to send the data to the Flask route
+            fetch('/process_combinations', {
+                method: 'POST',
+                body: formData,
+            })
+                .then(response => response.json())
+                .then(data => {
+                    // Handle the response from the Flask server, if needed
+                    console.log(data);
+                    alert(data.message + " Generated samples Count: " + data.file_count);
+                })
+                .catch(error => {
+                    // Handle any errors
+                    console.error("An error occurred:", error);
+                    alert("An error occurred while generating samples.");
+                });
+
+        });
+
+
+    </script>
+</body>
+
+</html>
