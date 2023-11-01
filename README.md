@@ -1,4 +1,3 @@
-# VOLANTE-HACKATHON
 <br />
 Dear All,
 <br />
