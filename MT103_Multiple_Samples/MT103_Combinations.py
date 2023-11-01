@@ -32,6 +32,8 @@ def convert_excel_to_mt103(excel_file_path, mt103_input_header, tag_list_for_com
             file_path = os.path.join(output_directory, file_name)
             if os.path.isfile(file_path):
                 os.remove(file_path)
+                script_directory = os.path.dirname(os.path.abspath(__file__))
+                print(script_directory)
 
     # Print the modified mt103_input_header
     print(mt103_input_header)
