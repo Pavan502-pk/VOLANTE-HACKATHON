@@ -1,18 +1,24 @@
-<br />
+# Hackathon Phase-1
+
 Dear All,
-<br />
-This is an Phase-1 of our Hackthon and Please find the attachments regarding it
-<br />
-**Hackathon-Idea**  : [Automatic Sample Generator Hackathon.pptx](https://github.com/Pavan502-pk/VOLANTE-HACKATHON/files/13226539/Automatic.Sample.Generator.Hackathon.pptx)
-<br />
-**Project-Setup**  : [Project Setup Steps-For-beginner.docx](https://github.com/Pavan502-pk/VOLANTE-HACKATHON/files/13226551/Project.Setup.Steps-For-beginner.docx)
-<br />
-**Project-Link**   : [click-here](https://volante-sample-generator.onrender.com/)
-<br />
-<br />
-Contributors :
-<br />
-     Aishwarya Ashtekar   :[click-here](https://github.com/AishwaryaAshtekar)
-<br />
-     Pavan Kalyan Mahanty :[click-here](https://pavan-links.netlify.app/)
-<br />
+
+Welcome to Phase-1 of our Hackathon! Please find the following attachments and information related to the event:
+
+## Hackathon Idea
+
+- **Hackathon-Idea** : [Automatic Sample Generator Hackathon.pptx](https://github.com/Pavan502-pk/VOLANTE-HACKATHON/files/13226539/Automatic.Sample.Generator.Hackathon.pptx)
+
+## Project Setup
+
+- **Project-Setup** : [Project Setup Steps-For-beginner.docx](https://github.com/Pavan502-pk/VOLANTE-HACKATHON/files/13226551/Project.Setup.Steps-For-beginner.docx)
+
+## Project Link
+
+- **Project-Link** : [Click here](https://volante-sample-generator.onrender.com/)
+
+## Contributors
+
+We appreciate the contributions of the following individuals to this project:
+
+- Aishwarya Ashtekar : [GitHub Profile](https://github.com/AishwaryaAshtekar)
+- Pavan Kalyan Mahanty : [Personal Website](https://pavan-links.netlify.app/)
